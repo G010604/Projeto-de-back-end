@@ -1,16 +1,22 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const routes = require('./routes');
+const config = require('./config');
+const errorMiddleware = require('./middleware/errorMiddleware');
+
+const jogosRoutes = require('./routes/jogos.js');
+const usuarioRoutes = require('./routes/usuario.js');
 
 const app = express();
-const port = 3000;
 
 app.use(bodyParser.json());
-app.use('/', routes);
 
-mongoose.connect('mongodb+srv://guyuusuke:twq22222@videogames.owmvyts.mongodb.net/?retryWrites=true&w=majority');
+app.use('/jogos', jogosRoutes);
 
-app.listen(port, () => {
-    console.log('App running');
+app.use('/usuario', usuarioRoutes);
+
+app.use(errorMiddleware);
+
+app.listen(config.port, () => {
+  console.log(`App running...`);
 });
