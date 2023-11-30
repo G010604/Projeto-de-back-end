@@ -1,0 +1,6 @@
+npm init
+npm i express
+npm i mongoose
+npm i express-validator
+npm i bcrypt
+npm i jsonwebtoken
