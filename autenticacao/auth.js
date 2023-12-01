@@ -6,16 +6,16 @@ module.exports = {
         let token = beartoken.split(" ");
 
         if (token[0] === 'Bearer') {
-            token = token[1];
+            authtoken = token[1];
         }
 
-        console.log(token);
+        console.log(authtoken);
 
-        jwt.verify(token, 'twq22222', (err, obj) => {
+        jwt.verify(authtoken, 'twq22222', (err, obj) => {
             if (err) {
                 return res.status(403).json({ mensagem: "Token inválido" });
             } else {
-                req.usuario = obj.usuario;
+                req.dev = obj.dev;
                 next();
             }
         });
