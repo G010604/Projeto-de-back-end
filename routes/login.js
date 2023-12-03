@@ -1,37 +1,74 @@
-const jwt = require('jsonwebtoken')
-const express = require('express')
+const jwt = require('jsonwebtoken');
+const express = require('express');
 const router = express.Router();
+const Usuario = require('../models/usuario');
+const Dev = require('../models/dev');
+require('dotenv').config();
 
-router.post('/login', (req, res) => {
-    const {usuario, senha} = req.body
+router.post('/login', async (req, res) => {
+    const { email, senha } = req.body;
 
-    if (!usuario || !senha) {
-        return res.status(400).json({ logged: false, mensagem: 'Usuário e senha são obrigatórios' });
-    }
+    const login = await Usuario.findOne({ email, senha });
 
-    if(senha == usuario){
-        const token = jwt.sign({usuario: usuario}, '12234321', {expiresIn: '1 hour'})
-        res.json({logged: true, token: token})
-    }
-    else{
-        res.status(403).json({logged: false, mensagem: 'Usuário ou senha inválidos'})
-    }
-})
+        if (!login) {
+            return res.status(403).json({ logged: false, mensagem: 'Usuário ou senha inválidos' });
+        }
 
-router.post('/login/dev', (req, res) => {
-    const {dev, senha} = req.body
+        const token = jwt.sign({ email: login.email }, process.env.SECRET_KEY_1, { expiresIn: '1 hour' });
+        res.json({ logged: true, token: token });
+});
 
-    if (!dev || !senha) {
-        return res.status(400).json({ logged: false, mensagem: 'Usuário e senha são obrigatórios' });
-    }
+router.post('/signup', async (req, res) => {
+    const { email, senha } = req.body;
 
-    if(dev == 'Gustavo Yuusuke' && senha == 'twq22222'){
-        const token = jwt.sign({dev: dev}, 'twq22222', {expiresIn: '1 hour'})
-        res.json({logged: true, token: token})
-    }
-    else{
-        res.status(403).json({logged: false, mensagem: 'Usuário ou senha inválidos'})
-    }
-})
+        const usuarioExistente = await Usuario.findOne({ email });
+
+        if (usuarioExistente) {
+            return res.status(400).json({ error: 'E-mail já registrado. Tente fazer login.' });
+        }
+       
+        const novoUsuario = new Usuario({
+            email,
+            senha
+        });
+
+        await novoUsuario.save();
+
+        res.json({ mensagem: 'Usuário registrado com sucesso.' });
+    
+});
+
+router.post('/login/dev', async (req, res) => {
+    const { email, senha } = req.body;
+
+    const login = await Dev.findOne({ email, senha });
+
+        if (!login) {
+            return res.status(403).json({ logged: false, mensagem: 'Usuário ou senha inválidos' });
+        }
+
+        const token = jwt.sign({ email: login.email }, process.env.SECRET_KEY_2, { expiresIn: '1 hour' });
+        res.json({ logged: true, token: token });
+});
+
+router.post('/signup/dev', async (req, res) => {
+    const { email, senha } = req.body;
+
+        const devExistente = await Dev.findOne({ email });
+
+        if (devExistente) {
+            return res.status(400).json({ error: 'E-mail já registrado. Tente fazer login.' });
+        }
+       
+        const novoDev = new Dev({
+            email,
+            senha
+        });
+
+        await novoDev.save();
+
+        res.json({ mensagem: 'Desenvolvedor registrado com sucesso.' });
+    
+});
 
 module.exports = router;

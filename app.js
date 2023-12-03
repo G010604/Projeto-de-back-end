@@ -11,6 +11,6 @@ app.use('/jogos', jogosRoutes);
 app.use('/', loginRoutes);
 
 app.listen(3000, () => {
-    mongoose.connect('mongodb+srv://guyuusuke:twq22222@videogames.owmvyts.mongodb.net/?retryWrites=true&w=majority')
+    mongoose.connect(process.env.MONGO_KEY_ACCESS)
     console.log(`App running...`);
 });
