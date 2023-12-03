@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
+
 
 module.exports = {
     acesso: (req, res, next) => {
@@ -11,9 +13,9 @@ module.exports = {
 
         console.log(authtoken);
 
-        jwt.verify(authtoken, 'twq22222', (err, obj) => {
+        jwt.verify(authtoken, process.env.SECRET_KEY_2, (err, obj) => {
             if (err) {
-                return res.status(403).json({ mensagem: "Token inválido" });
+                return res.status(403).json({ mensagem: "Você não tem autorização para utilizar esta função" });
             } else {
                 req.dev = obj.dev;
                 next();
