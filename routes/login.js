@@ -11,7 +11,7 @@ router.post('/login', async (req, res) => {
     const login = await Usuario.findOne({ email, senha });
 
         if (!login) {
-            return res.status(403).json({ logged: false, mensagem: 'Usuário ou senha inválidos' });
+            return res.status(403).json({ logged: false, mensagem: 'Email ou senha inválidos' });
         }
 
         const token = jwt.sign({ email: login.email }, process.env.SECRET_KEY_1, { expiresIn: '1 hour' });
@@ -44,7 +44,7 @@ router.post('/login/dev', async (req, res) => {
     const login = await Dev.findOne({ email, senha });
 
         if (!login) {
-            return res.status(403).json({ logged: false, mensagem: 'Usuário ou senha inválidos' });
+            return res.status(403).json({ logged: false, mensagem: 'Email ou senha inválidos' });
         }
 
         const token = jwt.sign({ email: login.email }, process.env.SECRET_KEY_2, { expiresIn: '1 hour' });
