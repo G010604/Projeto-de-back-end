@@ -8,12 +8,12 @@ module.exports = {
         let token = beartoken.split(" ");
 
         if (token[0] === 'Bearer') {
-            authtoken = token[1];
+            token = token[1]
         }
 
-        console.log(authtoken);
+        console.log(token);
 
-        jwt.verify(authtoken, process.env.SECRET_KEY_2, (err, obj) => {
+        jwt.verify(token, process.env.SECRET_KEY_2, (err, obj) => {
             if (err) {
                 return res.status(403).json({ mensagem: "Você não tem autorização para utilizar esta função" });
             } else {
