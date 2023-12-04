@@ -45,7 +45,19 @@ router.delete("/:id", Auth.acesso, async (req, res) => {
 
 // Atualizar jogos
 router.put("/:id", Auth.acesso, async (req, res) => {
-   
+/*  
+    #swagger.parameters['body'] = {
+        in: 'body',
+            description: 'Atualização de jogos...',
+            schema: {
+                $name: 'Nome',
+                $classification: 18,
+                $genre: 'FPS',
+                $price: 100,
+                $description: 'Um jogo de mundo aberto'
+            }
+    } 
+*/   
     const { error } = jogosSchema.validate(req.body);
     if (error) {
         return res.status(400).json({ erro: error.details[0].message, message: 'Preencha todos os campos' });
@@ -68,7 +80,19 @@ router.put("/:id", Auth.acesso, async (req, res) => {
 
 // Criar jogos
 router.post("/", Auth.acesso, async (req, res) => {
-    
+/*  
+    #swagger.parameters['body'] = {
+        in: 'body',
+            description: 'Criação de jogos...',
+            schema: {
+                $name: 'Nome',
+                $classification: 18,
+                $genre: 'FPS',
+                $price: 100,
+                $description: 'Um jogo de mundo aberto'
+            }
+    } 
+*/
     const { error } = jogosSchema.validate(req.body);
     if (error) {
         return res.status(400).json({ error: error.details[0].message, message: 'Preencha todos os campos' });
@@ -79,5 +103,67 @@ router.post("/", Auth.acesso, async (req, res) => {
     await jogos.save();
     res.send(jogos);
 });
+
+// Buscar jogos por gênero
+router.get("/por-genero/:genero", async (req, res) => {
+    const genero = req.params.genero;
+
+    const regex = new RegExp(genero, 'i');
+
+    const jogosPorGenero = await Jogos.find({ genre: regex });
+
+    if (!jogosPorGenero || jogosPorGenero.length === 0) {
+        return res.status(404).json({ erro: 'Nenhum jogo encontrado para o gênero especificado' });
+    }
+
+    res.send(jogosPorGenero);
+});
+
+// Rota de instalação do banco de dados
+router.get("/install", async (req, res) => {
+        
+    const jogosIniciais = [
+        {
+            name: 'The Adventure Quest',
+            classification: 12,
+            genre: 'Ação',
+            price: 49.99,
+            description: 'Embarque em uma incrível jornada cheia de ação e aventura.'
+        },
+        {
+            name: 'Galactic Conquest',
+            classification: 16,
+            genre: 'Estratégia',
+            price: 39.99,
+            description: 'Conquiste a galáxia com suas habilidades estratégicas neste jogo envolvente.'
+        },
+        {
+            name: 'Mystic Legends',
+            classification: 18,
+            genre: 'RPG',
+            price: 59.99,
+            description: 'Explore um mundo místico e torne-se uma lenda neste RPG emocionante.'
+        },
+        {
+            name: 'Velocity Racer',
+            classification: 12,
+            genre: 'Corrida',
+            price: 29.99,
+            description: 'Acelere sua adrenalina nas corridas mais velozes e emocionantes.'
+        },
+        {
+            name: 'Survival Horizon',
+            classification: 18,
+            genre: 'Sobrevivência',
+            price: 44.99,
+            description: 'Teste suas habilidades de sobrevivência em um mundo pós-apocalíptico cheio de desafios.'
+        }
+    ];
+
+        await Jogos.insertMany(jogosIniciais);
+
+        res.send("Banco de dados instalado com sucesso!");
+});
+
 
 module.exports = router;
