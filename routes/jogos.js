@@ -105,7 +105,7 @@ router.post("/", Auth.acesso, async (req, res) => {
 });
 
 // Buscar jogos por gênero
-router.get("/por-genero/:genero", async (req, res) => {
+router.get("/genero/:genero", async (req, res) => {
     const genero = req.params.genero;
 
     const regex = new RegExp(genero, 'i');
