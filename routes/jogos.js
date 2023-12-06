@@ -116,11 +116,11 @@ router.post("/", Auth.acesso, async (req, res) => {
 
     const jogos = new Jogos(req.body);
 
-    if (req.body.plataformas && req.body.plataformas.length > 0) {
-        jogos.plataformas = req.body.plataformas;
+    if (req.body.plataforma && req.body.plataforma.length > 0) {
+        jogos.plataforma = req.body.plataforma;
         // Atualizar as plataformas associadas
         await Plataforma.updateMany(
-            { _id: { $in: req.body.plataformas } },
+            { _id: { $in: req.body.plataforma } },
             { $push: { jogos: jogos._id } }
         );
     }
