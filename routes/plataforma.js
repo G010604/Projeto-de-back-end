@@ -107,7 +107,7 @@ router.delete("/:id", Auth.acesso, async (req, res) => {
     }
 });
 
-// Buscar jogos por nome
+// Buscar plataformas por nome
 router.get("/nome/:nome", async (req, res) => {
     const nome = req.params.nome;
 
