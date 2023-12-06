@@ -107,4 +107,19 @@ router.delete("/:id", Auth.acesso, async (req, res) => {
     }
 });
 
+// Buscar jogos por nome
+router.get("/nome/:nome", async (req, res) => {
+    const nome = req.params.nome;
+
+    const nomex = new RegExp(nome, 'i');
+
+    const platPorNome = await Plataforma.find({ nome: nomex });
+
+    if (!platPorNome || platPorNome.length === 0) {
+        return res.status(404).json({ erro: 'Nenhuma plataforma encontrada' });
+    }
+
+    res.send(platPorNome);
+});
+
 module.exports = router;
