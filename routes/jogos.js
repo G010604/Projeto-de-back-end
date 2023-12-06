@@ -36,13 +36,19 @@ router.get("/", async (req, res) => {
 
 // Deletar jogos
 router.delete("/:id", Auth.acesso, async (req, res) => {
-    const jogos = await Jogos.findByIdAndDelete(req.params.id);
+    const jogosDeletados = await Jogos.findByIdAndDelete(req.params.id);
 
-    if (!jogos) {
+    if (!jogosDeletados) {
         return res.status(404).json({ erro: 'Jogo não encontrado' });
     }
 
-    res.send(jogos);
+    const plataformaExistente = await Plataforma.findById(jogosDeletados.plataforma);
+    if (plataformaExistente) {
+        plataformaExistente.jogos.pull(jogosDeletados._id);
+        await plataformaExistente.save();
+    }
+
+    res.send(jogosDeletados);
 });
 
 // Atualizar jogos

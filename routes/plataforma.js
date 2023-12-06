@@ -53,7 +53,6 @@ router.put("/:id", Auth.acesso, async (req, res) => {
         return res.status(400).json({ error: error.details[0].message, message: 'Preencha todos os campos corretamente' });
     }
 
-  
     const plataformaAtualizada = await Plataforma.findByIdAndUpdate(
         req.params.id,
         req.body,
