@@ -42,7 +42,6 @@ router.post("/", Auth.acesso, async (req, res) => {
         const novaPlataforma = new Plataforma(req.body);
         await novaPlataforma.save();
 
-        // Atualize a referência à empresa na plataforma
         const empresaExistente = await Empresa.findById(req.body.empresa);
         if (empresaExistente) {
             empresaExistente.plataformas.push(novaPlataforma._id);
@@ -72,14 +71,12 @@ router.put("/:id", Auth.acesso, async (req, res) => {
             return res.status(404).json({ error: 'Plataforma não encontrada' });
         }
 
-        // Atualize a referência à empresa na plataforma
         const empresaExistente = await Empresa.findById(req.body.empresa);
         if (empresaExistente) {
-            // Remova a plataforma antiga da lista de plataformas da empresa
+          
             empresaExistente.plataformas.pull(plataformaAtualizada._id);
             await empresaExistente.save();
 
-            // Adicione a plataforma atualizada à lista de plataformas da empresa
             empresaExistente.plataformas.push(plataformaAtualizada._id);
             await empresaExistente.save();
         }
@@ -98,7 +95,6 @@ router.delete("/:id", Auth.acesso, async (req, res) => {
             return res.status(404).json({ error: 'Plataforma não encontrada' });
         }
 
-        // Remova a plataforma da lista de plataformas da empresa
         const empresaExistente = await Empresa.findById(plataformaDeletada.empresa);
         if (empresaExistente) {
             empresaExistente.plataformas.pull(plataformaDeletada._id);
