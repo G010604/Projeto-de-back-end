@@ -4,6 +4,7 @@ const Empresa = require('../models/empresa');
 const Plataforma = require('../models/plataforma');
 const Jogos = require('../models/jogos');
 const Dev = require('../models/dev');
+require('dotenv').config();
 
 router.get('/', async (req, res) => {
     const empresas = [
@@ -34,7 +35,7 @@ router.get('/', async (req, res) => {
     await Jogos.insertMany(jogos);
 
     const dev = [
-      { email: 'devPadrao@gmail.com', senha: 'senhaDoDevPadrao' }
+      { email: process.env.DEV_PADRAO, senha: process.env.SENHA_DEV_PADRAO }
     ];
     await Dev.insertMany(dev);
 
