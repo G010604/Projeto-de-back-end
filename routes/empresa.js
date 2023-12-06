@@ -76,4 +76,19 @@ router.delete("/:id", Auth.acesso, async (req, res) => {
     }
 });
 
+// Buscar empresas por nome
+router.get("/nome/:nome", async (req, res) => {
+    const nome = req.params.nome;
+
+    const nomex = new RegExp(nome, 'i');
+
+    const empPorNome = await Empresa.find({ nome: nomex });
+
+    if (!empPorNome || empPorNome.length === 0) {
+        return res.status(404).json({ erro: 'Nenhuma empresa encontrada' });
+    }
+
+    res.send(empPorNome);
+});
+
 module.exports = router;
