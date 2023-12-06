@@ -58,22 +58,19 @@ router.put("/:id", Auth.acesso, async (req, res) => {
 });
 
 router.delete("/:id", Auth.acesso, async (req, res) => {
-    try {
-        const empresaDeletada = await Empresa.findByIdAndDelete(req.params.id);
+   
+    const empresaDeletada = await Empresa.findByIdAndDelete(req.params.id);
 
-        if (!empresaDeletada) {
-            return res.status(404).json({ error: 'Empresa não encontrada' });
-        }
-
-        await Plataforma.updateMany(
-            { empresa: empresaDeletada._id },
-            { $unset: { empresa: "" } }
-        );
-
-        res.send(empresaDeletada);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+    if (!empresaDeletada) {
+        return res.status(404).json({ error: 'Empresa não encontrada' });
     }
+
+    await Plataforma.updateMany(
+        { empresa: empresaDeletada._id },
+        { $unset: { empresa: "" } }
+    );
+
+    res.send(empresaDeletada);
 });
 
 // Buscar empresas por nome

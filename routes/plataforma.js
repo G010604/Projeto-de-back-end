@@ -14,22 +14,18 @@ router.get("/", async (req, res) => {
     const limite = parseInt(req.query.limite) || 5;
     const pagina = parseInt(req.query.pagina) || 1;
 
-    try {
-        const totalPlat = await Plataforma.countDocuments();
-        const totalPaginas = Math.ceil(totalPlat / limite);
-        const pular = (pagina - 1) * limite;
+    const totalPlat = await Plataforma.countDocuments();
+    const totalPaginas = Math.ceil(totalPlat / limite);
+    const pular = (pagina - 1) * limite;
 
-        const plat = await Plataforma.find().skip(pular).limit(limite).populate('empresa', 'nome');
+    const plat = await Plataforma.find().skip(pular).limit(limite).populate('empresa', 'nome');
 
-        res.send({
-            plat,
-            paginaAtual: pagina,
-            totalPaginas,
-            totalPlat
-        });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+    res.send({
+        plat,
+        paginaAtual: pagina,
+        totalPaginas,
+        totalPlat
+    });    
 });
 
 router.post("/", Auth.acesso, async (req, res) => {
@@ -38,20 +34,17 @@ router.post("/", Auth.acesso, async (req, res) => {
         return res.status(400).json({ error: error.details[0].message, message: 'Preencha todos os campos corretamente' });
     }
 
-    try {
-        const novaPlataforma = new Plataforma(req.body);
-        await novaPlataforma.save();
+   
+    const novaPlataforma = new Plataforma(req.body);
+    await novaPlataforma.save();
 
-        const empresaExistente = await Empresa.findById(req.body.empresa);
-        if (empresaExistente) {
-            empresaExistente.plataformas.push(novaPlataforma._id);
-            await empresaExistente.save();
-        }
-
-        res.status(201).send(novaPlataforma);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+    const empresaExistente = await Empresa.findById(req.body.empresa);
+    if (empresaExistente) {
+        empresaExistente.plataformas.push(novaPlataforma._id);
+        await empresaExistente.save();
     }
+
+    res.status(201).send(novaPlataforma);    
 });
 
 router.put("/:id", Auth.acesso, async (req, res) => {
@@ -60,54 +53,49 @@ router.put("/:id", Auth.acesso, async (req, res) => {
         return res.status(400).json({ error: error.details[0].message, message: 'Preencha todos os campos corretamente' });
     }
 
-    try {
-        const plataformaAtualizada = await Plataforma.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true }
-        );
+  
+    const plataformaAtualizada = await Plataforma.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true }
+    );
 
-        if (!plataformaAtualizada) {
-            return res.status(404).json({ error: 'Plataforma não encontrada' });
-        }
-
-        const empresaExistente = await Empresa.findById(req.body.empresa);
-        if (empresaExistente) {
-          
-            empresaExistente.plataformas.pull(plataformaAtualizada._id);
-            await empresaExistente.save();
-
-            empresaExistente.plataformas.push(plataformaAtualizada._id);
-            await empresaExistente.save();
-        }
-
-        res.send(plataformaAtualizada);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+    if (!plataformaAtualizada) {
+        return res.status(404).json({ error: 'Plataforma não encontrada' });
     }
+
+    
+    const empresaExistente = await Empresa.findById(req.body.empresa);
+    if (empresaExistente) {
+            
+        empresaExistente.plataformas.pull(plataformaAtualizada._id);
+        await empresaExistente.save();
+
+        empresaExistente.plataformas.push(plataformaAtualizada._id);
+        await empresaExistente.save();
+    }
+
+    res.send(plataformaAtualizada);
 });
 
 router.delete("/:id", Auth.acesso, async (req, res) => {
-    try {
-        const plataformaDeletada = await Plataforma.findByIdAndDelete(req.params.id);
 
-        if (!plataformaDeletada) {
-            return res.status(404).json({ error: 'Plataforma não encontrada' });
-        }
+    const plataformaDeletada = await Plataforma.findByIdAndDelete(req.params.id);
 
-        const empresaExistente = await Empresa.findById(plataformaDeletada.empresa);
-        if (empresaExistente) {
-            empresaExistente.plataformas.pull(plataformaDeletada._id);
-            await empresaExistente.save();
-        }
-
-        res.send(plataformaDeletada);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+    if (!plataformaDeletada) {
+        return res.status(404).json({ error: 'Plataforma não encontrada' });
     }
+
+    const empresaExistente = await Empresa.findById(plataformaDeletada.empresa);
+    if (empresaExistente) {
+        empresaExistente.plataformas.pull(plataformaDeletada._id);
+        await empresaExistente.save();
+    }
+
+    res.send(plataformaDeletada);
 });
 
-// Buscar plataformas por nome
+// Buscar jogos por nome
 router.get("/nome/:nome", async (req, res) => {
     const nome = req.params.nome;
 
