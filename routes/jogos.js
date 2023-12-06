@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Joi = require('joi');
 const Jogos = require('../models/jogos');
+const Plataforma = require('../models/plataforma');
 const Auth = require('../autenticacao/auth')
 
 const jogosSchema = Joi.object({
@@ -10,6 +11,7 @@ const jogosSchema = Joi.object({
     genre: Joi.string().required(),
     price: Joi.number().min(0).required(),
     description: Joi.string().required(),
+    plataforma: Joi.array().items(Joi.string())
 });
 
 router.get("/", async (req, res) => {
@@ -75,6 +77,21 @@ router.put("/:id", Auth.acesso, async (req, res) => {
         return res.status(404).json({ erro: 'Jogo não encontrado' });
     }
 
+    await Plataforma.updateMany(
+        { _id: { $in: jogos.plataforma } },
+        { $pull: { jogos: jogos._id } }
+    );
+
+    // Associar as novas plataformas
+    if (req.body.plataforma && req.body.plataforma.length > 0) {
+        jogos.plataforma = req.body.plataforma;
+        // Atualizar as plataformas associadas
+        await Plataforma.updateMany(
+            { _id: { $in: req.body.plataforma } },
+            { $push: { jogos: jogos._id } }
+        );
+    }
+
     res.send(jogos);
 });
 
@@ -100,6 +117,16 @@ router.post("/", Auth.acesso, async (req, res) => {
 
     const jogos = new Jogos(req.body);
 
+    if (req.body.plataformas && req.body.plataformas.length > 0) {
+        jogos.plataformas = req.body.plataformas;
+        // Atualizar as plataformas associadas
+        await Plataforma.updateMany(
+            { _id: { $in: req.body.plataformas } },
+            { $push: { jogos: jogos._id } }
+        );
+    }
+
+
     await jogos.save();
     res.send(jogos);
 });
@@ -118,52 +145,5 @@ router.get("/genero/:genero", async (req, res) => {
 
     res.send(jogosPorGenero);
 });
-
-// Rota de instalação do banco de dados
-router.get("/install", async (req, res) => {
-        
-    const jogosIniciais = [
-        {
-            name: 'The Adventure Quest',
-            classification: 12,
-            genre: 'Ação',
-            price: 49.99,
-            description: 'Embarque em uma incrível jornada cheia de ação e aventura.'
-        },
-        {
-            name: 'Galactic Conquest',
-            classification: 16,
-            genre: 'Estratégia',
-            price: 39.99,
-            description: 'Conquiste a galáxia com suas habilidades estratégicas neste jogo envolvente.'
-        },
-        {
-            name: 'Mystic Legends',
-            classification: 18,
-            genre: 'RPG',
-            price: 59.99,
-            description: 'Explore um mundo místico e torne-se uma lenda neste RPG emocionante.'
-        },
-        {
-            name: 'Velocity Racer',
-            classification: 12,
-            genre: 'Corrida',
-            price: 29.99,
-            description: 'Acelere sua adrenalina nas corridas mais velozes e emocionantes.'
-        },
-        {
-            name: 'Survival Horizon',
-            classification: 18,
-            genre: 'Sobrevivência',
-            price: 44.99,
-            description: 'Teste suas habilidades de sobrevivência em um mundo pós-apocalíptico cheio de desafios.'
-        }
-    ];
-
-        await Jogos.insertMany(jogosIniciais);
-
-        res.send("Banco de dados instalado com sucesso!");
-});
-
 
 module.exports = router;
