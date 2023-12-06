@@ -23,7 +23,11 @@ const JogosSchema = new mongoose.Schema({
     description: {
         type: String,
         required: true
-    }
+    },
+    plataforma: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Plataforma'
+    }]
 });
 
 const Jogos = mongoose.model('Jogos', JogosSchema);
