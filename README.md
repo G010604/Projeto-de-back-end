@@ -12,7 +12,7 @@ empresa
 
 plataforma
 {
-	"nome": "Playstatio 6",
+	"nome": "string",
 	"empresa": "ID_EMPRESA"
 }
 
