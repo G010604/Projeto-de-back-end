@@ -82,10 +82,9 @@ router.put("/:id", Auth.acesso, async (req, res) => {
         { $pull: { jogos: jogos._id } }
     );
 
-    // Associar as novas plataformas
     if (req.body.plataforma && req.body.plataforma.length > 0) {
         jogos.plataforma = req.body.plataforma;
-        // Atualizar as plataformas associadas
+       
         await Plataforma.updateMany(
             { _id: { $in: req.body.plataforma } },
             { $push: { jogos: jogos._id } }
