@@ -1,9 +1,5 @@
 # Projeto-de-back-end
 
-npm init
-npm install express
-npm install nodemon
-
 Entrada de dados
 empresa
 {
