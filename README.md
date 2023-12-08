@@ -23,8 +23,8 @@ jogos
 }
 
 arquivo .env
+SECRET_KEY_1=tokenDoUsuario
 SECRET_KEY_1=tokenDoDev
-SECRET_KEY_2=tokenDoUsuario
 MONGO_KEY_ACCESS=CHAVE_DE_ACESSO_DO_BANCO_DE_DADOS
 DEV_PADRAO=devPadrao@gmail.com
 SENHA_DEV_PADRAO=senhaDoDevPadrao
