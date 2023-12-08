@@ -25,6 +25,6 @@ jogos
 arquivo .env
 SECRET_KEY_1=twq22222
 SECRET_KEY_2=12234321
-MONGO_KEY_ACCESS=mongodb+srv://guyuusuke:twq22222@videogames.owmvyts.mongodb.net/?retryWrites=true&w=majority
+MONGO_KEY_ACCESS=CHAVE_DE_ACESSO
 DEV_PADRAO=devPadrao@gmail.com
 SENHA_DEV_PADRAO=senhaDoDevPadrao
